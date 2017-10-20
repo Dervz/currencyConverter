@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Scanner;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class CurrencyConverter {
 
@@ -26,15 +25,19 @@ public class CurrencyConverter {
         Gson gson = new Gson();
         JSONParser json = gson.fromJson(latest, JSONParser.class);
 
-        HashMap<String, String> hm = new HashMap<>();
-        System.out.println(json.getDate());
-        System.out.println(json.getBase());
-        hm = json.getRates();
-
-        for (String name : hm.keySet()) {
-            String value = hm.get(name);
-            System.out.println(name + " " + value);
-        }
+        GUI.loadGUI();
+        
+        
+        
+//        HashMap<String, String> hm = new HashMap<>();
+//        System.out.println(json.getDate());
+//        System.out.println(json.getBase());
+//        hm = json.getRates();
+//
+//        for (String name : hm.keySet()) {
+//            String value = hm.get(name);
+//            System.out.println(name + " " + value);
+//        }
 
     }
 
