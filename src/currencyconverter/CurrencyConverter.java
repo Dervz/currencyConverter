@@ -13,31 +13,23 @@ import com.google.gson.Gson;
 
 public class CurrencyConverter {
 
-    //private static final String USER_AGENT = "Mozilla/5.0";
+    
 
     public static void main(String[] args) throws Exception {
 
-        CurrencyConverter http = new CurrencyConverter();
-
-        String latestUrl = "https://api.fixer.io/latest";
-        String latest = CurrencyConverter.getJSON(latestUrl);
+        String API_PROVIDER = "https://api.fixer.io";
+        String latest = CurrencyConverter.getJSON(API_PROVIDER + "/latest");
         
         Gson gson = new Gson();
         JSONParser json = gson.fromJson(latest, JSONParser.class);
+        System.out.println("date = " + json.getDate() + " , base = " + json.getBase());
 
-        GUI.loadGUI();
-        
-        
-        
-//        HashMap<String, String> hm = new HashMap<>();
-//        System.out.println(json.getDate());
-//        System.out.println(json.getBase());
-//        hm = json.getRates();
-//
-//        for (String name : hm.keySet()) {
-//            String value = hm.get(name);
-//            System.out.println(name + " " + value);
-//        }
+        HashMap<String, String> hm = new HashMap<>();
+        hm = json.getRates();
+        printMap(hm);
+   
+        //load GUI, passing the map to fullfil comboboxes
+        new GUI(hm).setVisible(true);
 
     }
 
@@ -50,8 +42,6 @@ public class CurrencyConverter {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
         con.setRequestMethod("GET");
-        //con.setRequestProperty("User-Agent", USER_AGENT);
-
         System.out.println("\nGET request to : " + uri + "\nResponse code : " + con.getResponseCode());
 
         Scanner scan = new Scanner(con.getInputStream());
@@ -60,4 +50,12 @@ public class CurrencyConverter {
         return response;
     }
 
+    
+    public static void printMap(HashMap<String, String> map){
+     for (String name : map.keySet()) {
+            String value = map.get(name);
+            System.out.println(name + " " + value);
+        }
+    
+    }
 }

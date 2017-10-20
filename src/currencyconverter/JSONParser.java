@@ -5,12 +5,13 @@
 package currencyconverter;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class JSONParser {
 
     String base;
     String date;
+
+    //HashMap with key = currency name, value = exchange rate
     private HashMap<String, String> rates = new HashMap<>();
 
     public HashMap<String, String> getRates() {
