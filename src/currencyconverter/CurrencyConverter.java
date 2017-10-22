@@ -30,9 +30,8 @@ public class CurrencyConverter {
         JSONParser json = gson.fromJson(latest, JSONParser.class);
         System.out.println("date = " + json.getDate() + " , base = " + json.getBase());
 
-        //store rates returned by Fixer.io/latest 
-        HashMap<String, String> codes = json.getRates();
-        codes = addCurrencyNames(codes);
+        //store rates returned by Fixer.io/latest and add full Currency Names
+        HashMap<String, String> codes = addCurrencyNames(json.getRates());
         printMap(codes);
 
         //load GUI, passing the map to fullfil comboboxes with its keys
@@ -60,10 +59,10 @@ public class CurrencyConverter {
     public static String convert(String currencyFrom, String currencyTo, Double amount) throws Exception {
 
         
-         //substitute both Strings with their substrings of currencyCodes contained between "(" and ")"
-         currencyFrom = currencyFrom.substring(currencyFrom.indexOf("(") + 1, currencyFrom.indexOf(")"));
-         currencyTo = currencyTo.substring(currencyTo.indexOf("(") + 1, currencyTo.indexOf(")"));
-        
+        //substitute both Strings with their substrings of currencyCodes contained between "(" and ")"
+        currencyFrom = currencyFrom.substring(currencyFrom.indexOf("(") + 1, currencyFrom.indexOf(")"));
+        currencyTo = currencyTo.substring(currencyTo.indexOf("(") + 1, currencyTo.indexOf(")"));
+
         if (currencyFrom != null && currencyTo != null && !currencyTo.equals(currencyFrom)) {
             String response = getJSON(API_FIXER + "/latest?base=" + currencyFrom);
 
@@ -80,19 +79,20 @@ public class CurrencyConverter {
             df.setRoundingMode(RoundingMode.CEILING);
             double answer = amount * conversionRate;
 
-            return amount + " " + currencyFrom + " = " + df.format(answer) + " " + currencyTo;
+            return amount + " " + currencyFrom + " = " + df.format(answer) + " " + currencyTo + "     1 " + currencyFrom + " = " + df.format(conversionRate) + " " + currencyTo;
 
         } //if currencies selected are same
         else if (currencyTo.equals(currencyFrom)) {
-            return amount + " " + currencyFrom + " = " + amount + " " + currencyTo;
+            return amount + " " + currencyFrom + " = " + amount + " " + currencyTo+ "     1 " + currencyFrom + " = " + "1" + " " + currencyTo;
         }
+        
+        
 
         return "You did not select any currency";
     }
 
     //Loads up the GUI and performs some installation
     public static void GUILoader(HashMap<String, String> codes) {
-        //instantiate GUI
         GUI gui = new GUI();
         gui.setVisible(true);
 
@@ -100,6 +100,33 @@ public class CurrencyConverter {
         gui.fillBoxes(codes);
     }
 
+    
+
+    /*    adds full currency name to HashMap's keys and returns it
+     E.g: RUB ---> Russian Ruble (RUB) 
+          AUD ---> Australian Dollar (AUD)
+     */
+    public static HashMap addCurrencyNames(HashMap<String, String> codes) {
+
+        HashMap<String, String> modified = new HashMap();
+
+        //set locale to ROOT (as default and suitable for all contries)
+        Locale.setDefault(Locale.ROOT);
+
+        for (String name : codes.keySet()) {
+            String value = codes.get(name);
+
+            //create Currency object for each key (Currency Code)
+            Currency c = Currency.getInstance(name);
+
+            //get full name of each Currency object by its Currency Code
+            String newName = c.getDisplayName() + " (" + name + ")";
+            modified.put(newName, value);
+        }
+
+        return modified;
+    }
+    
     public static void printMap(HashMap<String, String> map) {
 
         for (String name : map.keySet()) {
@@ -108,30 +135,5 @@ public class CurrencyConverter {
 
         }
 
-    }
-
-    /*    adds full currency name to HashMap's keys and returns it
-     E.g: RUB ---> Russian Ruble (RUB) 
-          AUD ---> Australian Dollar (AUD)
-    */
-    public static HashMap addCurrencyNames(HashMap<String, String> codes) {
-        
-        HashMap<String, String> modified = new HashMap();
-        
-        //set locale to ROOT (as default and suitable for all contries)
-        Locale.setDefault(Locale.ROOT);
-        
-        for (String name : codes.keySet()) {
-            String value = codes.get(name);
-            
-            //create Currency object for each key (Currency Code)
-            Currency c = Currency.getInstance(name);
-            
-            //get full name of each Currency object by its Currency Code
-            String newName = c.getDisplayName() + " (" + name + ")";
-            modified.put(newName, value);
-        }
-
-        return modified;
     }
 }
