@@ -15,20 +15,24 @@ public class GUI extends javax.swing.JFrame {
     String secondCurrency;
     String amountValue;
 
-    public GUI(HashMap<String, String> map) {
+    //GUI constructor
+    public GUI() {
         setLookAndFeel();
         initComponents();
+    }
 
-        for (String name : map.keySet()) {
+    //set answer (calculation) to label
+    public void setAnswer(String ans) {
+        answer.setText(ans);
+    }
+
+    //fullfill the ComboBoxes with data from HashMap
+    public void fillBoxes(HashMap<String, String> codes) {
+        for (String name : codes.keySet()) {
             currencyFrom.addItem(name);
             currencyTo.addItem(name);
 
         }
-
-    }
-
-    public void setAnswer(String ans) {
-        answer.setText(ans);
     }
 
     @SuppressWarnings("unchecked")
@@ -161,11 +165,11 @@ public class GUI extends javax.swing.JFrame {
         CurrencyConverter converter = new CurrencyConverter();
         String ans = "Calculation failed";
         try {
-            
-            double amounts = Double.parseDouble(amount.getText());       
+
+            double amounts = Double.parseDouble(amount.getText());
             ans = converter.convert(getFirstCurrency(), getSecondCurrency(), amounts);
         } catch (Exception ex) {
-           Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         answer.setText(ans);
     }//GEN-LAST:event_convertActionPerformed
