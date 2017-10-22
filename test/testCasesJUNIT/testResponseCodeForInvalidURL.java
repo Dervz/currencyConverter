@@ -1,32 +1,30 @@
 package testCasesJUNIT;
 
-import currencyconverter.CurrencyConverter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-public class goodURLtest {
+public class testResponseCodeForInvalidURL {
 
-    /*checks that establishing HttpURLConnection to the appropriate link 
-      returns response code of 200
+    /*checks that establishing HttpURLConnection to the INVALID link 
+      returns response code of 404
      */
     @Test
-    public void responseCode200() throws IOException {
-        String fixerAPI_URL = "https://api.fixer.io/latest";
-        CurrencyConverter.getJSON(fixerAPI_URL);
+    public void checkResponseCode404() throws IOException {
+
+        String fixerAPI_URL = "https://api.fixer.io/notLatest";
 
         //Given
         URL url = new URL(fixerAPI_URL);
 
+        //Execute
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-        //Excuted
         int responseCode = con.getResponseCode();
 
         //Verify
-        assertEquals(200, responseCode);
+        assertEquals(404, responseCode);
 
     }
 }

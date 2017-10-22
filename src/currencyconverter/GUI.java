@@ -48,6 +48,7 @@ public class GUI extends javax.swing.JFrame {
         labelTo = new javax.swing.JLabel();
         answer = new javax.swing.JLabel();
         convert = new javax.swing.JButton();
+        answer2 = new javax.swing.JLabel();
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -100,6 +101,8 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        answer2.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -117,6 +120,7 @@ public class GUI extends javax.swing.JFrame {
                         .addGap(114, 114, 114))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(answer2, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(convert)
                             .addComponent(answer, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 135, Short.MAX_VALUE))))
@@ -136,7 +140,9 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(convert)
                 .addGap(18, 18, 18)
                 .addComponent(answer, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(114, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(answer2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(85, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -179,7 +185,10 @@ public class GUI extends javax.swing.JFrame {
         } catch (Exception ex) {
             System.out.println("PLEASE ENTER RIGHT AMOUNT AS INTEGER OR DOUBLE");
         }
-        answer.setText(ans);
+        String splitAns[] = ans.split("\\*");
+       
+        answer.setText(splitAns[0]);
+        answer2.setText("(" + splitAns[1] + ")");
     }//GEN-LAST:event_convertActionPerformed
 
     //erase everything in the textbox onClick
@@ -243,6 +252,7 @@ public class GUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField amount;
     private javax.swing.JLabel answer;
+    private javax.swing.JLabel answer2;
     private javax.swing.JButton convert;
     private javax.swing.JComboBox<String> currencyFrom;
     private javax.swing.JComboBox<String> currencyTo;

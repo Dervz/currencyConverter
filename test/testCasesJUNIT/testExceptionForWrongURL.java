@@ -1,12 +1,11 @@
 package testCasesJUNIT;
 
-
 import org.junit.Test;
 import currencyconverter.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-public class badURLtest {
+public class testExceptionForWrongURL {
 
     /*checks if invalid link is provided (invalid link) such as 
     "badURL" then getJSON method will throw
@@ -17,7 +16,7 @@ public class badURLtest {
 
         //Given
         String badURL = "badURL";
-        System.out.println("badURLtest");
+
         //Execute
         CurrencyConverter.getJSON(badURL);
 

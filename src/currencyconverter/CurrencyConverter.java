@@ -10,12 +10,10 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Scanner;
 import com.google.gson.Gson;
-import java.awt.event.KeyEvent;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Currency;
 import java.util.Locale;
-import javax.swing.Action;
 
 public class CurrencyConverter {
 
@@ -58,19 +56,23 @@ public class CurrencyConverter {
 
     public static String convert(String currencyFrom, String currencyTo, Double amount) throws Exception {
 
-        
-        //substitute both Strings with their substrings of currencyCodes contained between "(" and ")"
-        currencyFrom = currencyFrom.substring(currencyFrom.indexOf("(") + 1, currencyFrom.indexOf(")"));
-        currencyTo = currencyTo.substring(currencyTo.indexOf("(") + 1, currencyTo.indexOf(")"));
+        /*substitute both Strings with substrings contained between "(" and ")" 
+          results in substitution of full currency name to currency code
+         */
+        if (currencyFrom.length() > 3 && currencyTo.length() > 3) {
+            currencyFrom = currencyFrom.substring(currencyFrom.indexOf("(") + 1, currencyFrom.indexOf(")"));
+            currencyTo = currencyTo.substring(currencyTo.indexOf("(") + 1, currencyTo.indexOf(")"));
+        }
 
-        if (currencyFrom != null && currencyTo != null && !currencyTo.equals(currencyFrom)) {
+        //if provided currencies are not empty strings and not the same
+        if (!"".equals(currencyFrom) && !"".equals(currencyTo) && !currencyTo.equals(currencyFrom)) {
             String response = getJSON(API_FIXER + "/latest?base=" + currencyFrom);
 
-            //get the rates from JSON format
+            //get the rates from API in JSON format
             Gson gson = new Gson();
             JSONParser json = gson.fromJson(response, JSONParser.class);
 
-            //rate of the currency against base
+            //rate of the currencyTo against currencyFrom
             String rate = json.getRates().get(currencyTo);
             double conversionRate = Double.valueOf((rate != null) ? rate : "0.0");
 
@@ -79,16 +81,14 @@ public class CurrencyConverter {
             df.setRoundingMode(RoundingMode.CEILING);
             double answer = amount * conversionRate;
 
-            return amount + " " + currencyFrom + " = " + df.format(answer) + " " + currencyTo + "     1 " + currencyFrom + " = " + df.format(conversionRate) + " " + currencyTo;
+            return amount + " " + currencyFrom + " = " + df.format(answer) + " " + currencyTo + "*1 " + currencyFrom + " = " + df.format(conversionRate) + " " + currencyTo;
 
-        } //if currencies selected are same
-        else if (currencyTo.equals(currencyFrom)) {
-            return amount + " " + currencyFrom + " = " + amount + " " + currencyTo+ "     1 " + currencyFrom + " = " + "1" + " " + currencyTo;
+        } //if currencies selected are the same
+        else if (currencyTo.equals(currencyFrom) && !"".equals(currencyFrom) && !"".equals(currencyTo)) {
+            return amount + " " + currencyFrom + " = " + amount + " " + currencyTo + "*1 " + currencyFrom + " = " + "1" + " " + currencyTo;
+        } else {
+            return "You did not select any currency";
         }
-        
-        
-
-        return "You did not select any currency";
     }
 
     //Loads up the GUI and performs some installation
@@ -99,8 +99,6 @@ public class CurrencyConverter {
         //fullfills ComboBoxes with currencies
         gui.fillBoxes(codes);
     }
-
-    
 
     /*    adds full currency name to HashMap's keys and returns it
      E.g: RUB ---> Russian Ruble (RUB) 
@@ -126,7 +124,7 @@ public class CurrencyConverter {
 
         return modified;
     }
-    
+
     public static void printMap(HashMap<String, String> map) {
 
         for (String name : map.keySet()) {
