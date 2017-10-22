@@ -1,6 +1,6 @@
 /**
  *
- * @author Nevmovenko
+ * @author Pavel Nevmovenko
  */
 package currencyconverter;
 
