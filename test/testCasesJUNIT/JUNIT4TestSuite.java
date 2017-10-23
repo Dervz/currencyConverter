@@ -12,6 +12,8 @@ import org.junit.runners.Suite;
              testCasesJUNIT.testResponseMessageJSON.class,
              testCasesJUNIT.testReturnOfConvertMethod.class,
              testCasesJUNIT.testConvertMethodValidity.class,
+             testCasesJUNIT.testAddingCurrencyFullNames.class,
+             testCasesJUNIT.testJSONParser.class
                      
         })
 public class JUNIT4TestSuite {

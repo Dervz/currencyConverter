@@ -4,9 +4,7 @@
  */
 package currencyconverter;
 
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.TreeMap;
 import javax.swing.JComboBox;
 
 public class GUI extends javax.swing.JFrame {
@@ -22,13 +20,8 @@ public class GUI extends javax.swing.JFrame {
         setResizable(false);
     }
 
-    //set answer (calculation) to label
-    public void setAnswer(String ans) {
-        answer.setText(ans);
-    }
-
-    //fullfill the ComboBoxes with data from HashMap
-    public void fillBoxes(HashMap<String, String> codes) {
+    //fullfills the ComboBoxes with data from HashMap
+    public void fillBoxes(TreeMap<String, String> codes) {
         for (String name : codes.keySet()) {
             currencyFrom.addItem(name);
             currencyTo.addItem(name);
@@ -36,6 +29,7 @@ public class GUI extends javax.swing.JFrame {
         }
     }
 
+    //bunch of action listeners
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -176,19 +170,32 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_currencyToActionPerformed
 
     private void convertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convertActionPerformed
-        CurrencyConverter converter = new CurrencyConverter();
         String ans = "Calculation failed, Please enter amount to convert";
         try {
-
             double amounts = Double.parseDouble(amount.getText());
-            ans = converter.convert(getFirstCurrency(), getSecondCurrency(), amounts);
+
+            String currencyFrom = getFirstCurrency();
+            String currencyTo = getSecondCurrency();
+
+            /*substitute both Strings with substrings contained between "(" and ")" 
+              results in substitution of full currency name to currency code
+             */
+            if (currencyFrom.length() > 3 && currencyTo.length() > 3) {
+                currencyFrom = currencyFrom.substring(currencyFrom.indexOf("(") + 1, currencyFrom.indexOf(")"));
+                currencyTo = currencyTo.substring(currencyTo.indexOf("(") + 1, currencyTo.indexOf(")"));
+            }
+            ans = CurrencyConverter.convert(currencyFrom, currencyTo, amounts);
+
+            if (!ans.equals("You did not select any currency")) {
+                String splitAns[] = ans.split("\\*");
+
+                answer.setText(splitAns[0]);
+                answer2.setText("(" + splitAns[1] + ")");
+            }
         } catch (Exception ex) {
             System.out.println("PLEASE ENTER RIGHT AMOUNT AS INTEGER OR DOUBLE");
+            answer.setText(ans);
         }
-        String splitAns[] = ans.split("\\*");
-       
-        answer.setText(splitAns[0]);
-        answer2.setText("(" + splitAns[1] + ")");
     }//GEN-LAST:event_convertActionPerformed
 
     //erase everything in the textbox onClick
@@ -206,6 +213,7 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jPanel1MouseClicked
 
+    //bunch of getters and setters
     public void setAmountValue(String value) {
         amountValue = value;
     }
@@ -247,6 +255,11 @@ public class GUI extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+    }
+    
+    //set answer (for the convertion query) to label
+    public void setAnswer(String ans) {
+        answer.setText(ans);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

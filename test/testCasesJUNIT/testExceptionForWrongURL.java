@@ -19,6 +19,9 @@ public class testExceptionForWrongURL {
 
         //Execute
         CurrencyConverter.getJSON(badURL);
+        
+        //Verify 
+        //thows MalformedURLException
 
     }
 }

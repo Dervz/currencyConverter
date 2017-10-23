@@ -14,6 +14,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Currency;
 import java.util.Locale;
+import java.util.TreeMap;
 
 public class CurrencyConverter {
 
@@ -29,14 +30,16 @@ public class CurrencyConverter {
         System.out.println("date = " + json.getDate() + " , base = " + json.getBase());
 
         //store rates returned by Fixer.io/latest and add full Currency Names
-        HashMap<String, String> codes = addCurrencyNames(json.getRates());
+        TreeMap<String, String> codes = addCurrencyNames(json.getRates());
         printMap(codes);
 
         //load GUI, passing the map to fullfil comboboxes with its keys
         GUILoader(codes);
 
     }
+    
 
+    //gets JSON message from the API endpoint provided as String in args
     public static String getJSON(String uri) throws MalformedURLException, IOException {
 
         //Create instance of the URL, MalformedURLException is caught
@@ -53,20 +56,25 @@ public class CurrencyConverter {
 
         return response;
     }
+    
 
+    //Converts between 2 currencies and returns the answer.
     public static String convert(String currencyFrom, String currencyTo, Double amount) throws Exception {
 
-        /*substitute both Strings with substrings contained between "(" and ")" 
-          results in substitution of full currency name to currency code
-         */
-        if (currencyFrom.length() > 3 && currencyTo.length() > 3) {
-            currencyFrom = currencyFrom.substring(currencyFrom.indexOf("(") + 1, currencyFrom.indexOf(")"));
-            currencyTo = currencyTo.substring(currencyTo.indexOf("(") + 1, currencyTo.indexOf(")"));
+        //if Strings provided are null 
+        if (currencyFrom.equals("") || currencyTo.equals("")) {
+            return "You did not select any currency";
         }
 
-        //if provided currencies are not empty strings and not the same
-        if (!"".equals(currencyFrom) && !"".equals(currencyTo) && !currencyTo.equals(currencyFrom)) {
+        //if selected currencies are not the same
+        if (!currencyTo.equals(currencyFrom)) {
+
+            //record time for API respond (should be implimented inside this method , cant isolate)
+            long startTime = System.nanoTime();
             String response = getJSON(API_FIXER + "/latest?base=" + currencyFrom);
+            long endTime = System.nanoTime();
+            long duration = (endTime - startTime) / 1000000;
+            System.out.println("API responded in " + duration + " ms ");
 
             //get the rates from API in JSON format
             Gson gson = new Gson();
@@ -84,33 +92,29 @@ public class CurrencyConverter {
             return amount + " " + currencyFrom + " = " + df.format(answer) + " " + currencyTo + "*1 " + currencyFrom + " = " + df.format(conversionRate) + " " + currencyTo;
 
         } //if currencies selected are the same
-        else if (currencyTo.equals(currencyFrom) && !"".equals(currencyFrom) && !"".equals(currencyTo)) {
+        else if (currencyTo.equals(currencyFrom)) {
             return amount + " " + currencyFrom + " = " + amount + " " + currencyTo + "*1 " + currencyFrom + " = " + "1" + " " + currencyTo;
-        } else {
-            return "You did not select any currency";
         }
+        return "You did not select any currency";
     }
+    
 
-    //Loads up the GUI and performs some installation
-    public static void GUILoader(HashMap<String, String> codes) {
+    //Loads up the GUI 
+    public static void GUILoader(TreeMap<String, String> codes) {
         GUI gui = new GUI();
         gui.setVisible(true);
-
-        //fullfills ComboBoxes with currencies
         gui.fillBoxes(codes);
     }
 
-    /*    adds full currency name to HashMap's keys and returns it
-     E.g: RUB ---> Russian Ruble (RUB) 
-          AUD ---> Australian Dollar (AUD)
-     */
-    public static HashMap addCurrencyNames(HashMap<String, String> codes) {
-
-        HashMap<String, String> modified = new HashMap();
-
-        //set locale to ROOT (as default and suitable for all contries)
+    
+    //Adds full currency name to TreeMap's keys and returns it
+    public static TreeMap addCurrencyNames(HashMap<String, String> codes) {
+        TreeMap<String, String> modified = new TreeMap();
         Locale.setDefault(Locale.ROOT);
 
+        /*E.g: RUB ---> Russian Ruble (RUB) 
+                AUD ---> Australian Dollar (AUD)
+         */
         for (String name : codes.keySet()) {
             String value = codes.get(name);
 
@@ -121,11 +125,11 @@ public class CurrencyConverter {
             String newName = c.getDisplayName() + " (" + name + ")";
             modified.put(newName, value);
         }
-
         return modified;
     }
+    
 
-    public static void printMap(HashMap<String, String> map) {
+    public static void printMap(TreeMap<String, String> map) {
 
         for (String name : map.keySet()) {
             String value = map.get(name);
@@ -134,4 +138,5 @@ public class CurrencyConverter {
         }
 
     }
+
 }
