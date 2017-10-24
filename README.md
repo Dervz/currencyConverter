@@ -1,5 +1,7 @@
 # Currency Converter 
-
+<b>NOTE: when you run project, IF YOU GET THE ERROR please add jar path by</b>
+Rght click on project name --> properties ---> Libraries ---> Add jar/folder ---> Choose gson-2.6.2.jar located in the project repo. 
+This is the reported bug https://netbeans.org/bugzilla/show_bug.cgi?id=54450 which happens rarely.
 
 ## 🔵 Overview
 - "Currency Converter" is a Java program designed to perform convertions between two currencies. 
